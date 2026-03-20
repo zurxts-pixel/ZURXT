@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Launch your Minecraft server in seconds with ZURXT. NVMe SSD, 99.9% uptime, instant setup, and 24/7 support. Start your free trial today." />
+  <title>ZURXT – High-Performance Minecraft Server Hosting | NVMe, DDoS Protection</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =============================================
+       RESET & BASE
+    ============================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:       #08080f;
+      --deep:        #0d0d1a;
+      --card-bg:     #111126;
+      --border:      #1e1e3a;
+      --purple:      #7c3aed;
+      --purple-mid:  #9d5cf6;
+      --blue-neon:   #22d3ee;
+      --blue-glow:   #06b6d4;
+      --text:        #e2e8f0;
+      --muted:       #94a3b8;
+      --white:       #ffffff;
+      --gradient:    linear-gradient(135deg, #7c3aed 0%, #22d3ee 100%);
+      --glow-purple: 0 0 30px rgba(124, 58, 237, 0.4);
+      --glow-blue:   0 0 30px rgba(34, 211, 238, 0.35);
+      --radius:      14px;
+      --transition:  0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: var(--black);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--deep); }
+    ::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 99px; }
+
+    /* =============================================
+       UTILITY
+    ============================================= */
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+    .section    { padding: 100px 0; }
+    .section-label {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--blue-neon);
+      margin-bottom: 14px;
+    }
+    .section-title {
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 560px;
+    }
+    .text-center { text-align: center; }
+    .text-center .section-sub { margin: 0 auto; }
+
+    /* Gradient text */
+    .grad {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: var(--gradient);
+      color: var(--white);
+      box-shadow: 0 0 24px rgba(124, 58, 237, 0.45);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 42px rgba(124, 58, 237, 0.65);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1.5px solid var(--border);
+    }
+    .btn-outline:hover {
+      border-color: var(--purple-mid);
+      color: var(--white);
+      background: rgba(124, 58, 237, 0.08);
+      transform: translateY(-2px);
+    }
+
+    /* =============================================
+       PARTICLES CANVAS
+    ============================================= */
+    #particles-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* =============================================
+       NAVBAR
+    ============================================= */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 18px 0;
+      transition: background 0.4s, backdrop-filter 0.4s, border-color 0.4s;
+    }
+    .navbar.scrolled {
+      background: rgba(8, 8, 15, 0.85);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+    .navbar .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .navbar-brand {
+      font-size: 1.5rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      text-decoration: none;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .navbar-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      list-style: none;
+    }
+    .navbar-links a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color var(--transition);
+    }
+    .navbar-links a:hover { color: var(--white); }
+    .navbar-cta { display: flex; align-items: center; gap: 12px; }
+
+    /* Mobile menu toggle */
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+    .nav-toggle span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: var(--transition);
+    }
+
+    /* =============================================
+       HERO SECTION
+    ============================================= */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      padding: 120px 0 80px;
+    }
+    /* Animated gradient background */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%,   rgba(124, 58, 237, 0.22) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 80% 60%,  rgba(34, 211, 238, 0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 10% 80%,  rgba(124, 58, 237, 0.12) 0%, transparent 60%);
+      animation: heroGlow 8s ease-in-out infinite alternate;
+      z-index: 0;
+    }
+    @keyframes heroGlow {
+      0%   { opacity: 0.8; transform: scale(1); }
+      100% { opacity: 1;   transform: scale(1.04); }
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: rgba(34, 211, 238, 0.08);
+      border: 1px solid rgba(34, 211, 238, 0.25);
+      border-radius: 99px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--blue-neon);
+      letter-spacing: 0.05em;
+      margin-bottom: 28px;
+    }
+    .hero-badge::before {
+      content: '';
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--blue-neon);
+      box-shadow: 0 0 8px var(--blue-neon);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    .hero-title {
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 20px;
+    }
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 480px;
+      margin-bottom: 36px;
+    }
+    .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
+
+    /* Hero visual card */
+    .hero-visual {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .hero-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      width: 100%;
+      max-width: 380px;
+      position: relative;
+      box-shadow: 0 0 60px rgba(124, 58, 237, 0.2), 0 0 120px rgba(34, 211, 238, 0.08);
+      animation: floatCard 5s ease-in-out infinite;
+    }
+    @keyframes floatCard {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-12px); }
+    }
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 21px;
+      background: linear-gradient(135deg, rgba(124,58,237,0.5), rgba(34,211,238,0.3), transparent 60%);
+      z-index: -1;
+    }
+    .server-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .status-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 10px #22c55e;
+      animation: pulse 2s infinite;
+    }
+    .status-text {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #22c55e;
+    }
+    .server-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 18px;
+    }
+    .server-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .stat-item {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+    .stat-value {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--white);
+    }
+    .stat-value.blue  { color: var(--blue-neon); }
+    .stat-value.purple { color: var(--purple-mid); }
+
+    .mini-bar-wrap { margin-bottom: 8px; }
+    .mini-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+    .mini-bar {
+      height: 5px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .mini-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: var(--gradient);
+      animation: barFill 2.5s ease-out forwards;
+      width: 0;
+    }
+    @keyframes barFill { to { width: var(--target-width); } }
+
+    /* =============================================
+       FEATURES SECTION
+    ============================================= */
+    .features { background: var(--deep); }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      margin-top: 56px;
+    }
+    .feature-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+      cursor: default;
+    }
+    .feature-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(124,58,237,0.06), rgba(34,211,238,0.04));
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+    .feature-card:hover {
+      border-color: rgba(124, 58, 237, 0.5);
+      transform: translateY(-6px);
+      box-shadow: var(--glow-purple);
+    }
+    .feature-card:hover::after { opacity: 1; }
+
+    .feature-icon {
+      width: 52px; height: 52px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+    .feature-icon.purple { background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.3); }
+    .feature-icon.blue   { background: rgba(34,211,238,0.12); border: 1px solid rgba(34,211,238,0.25); }
+
+    .feature-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+    .feature-desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.65;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* =============================================
+       PRICING SECTION
+    ============================================= */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      margin-top: 56px;
+      align-items: start;
+    }
+    .pricing-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 30px;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    .pricing-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--glow-purple);
+    }
+    .pricing-card.popular {
+      border-color: var(--purple);
+      box-shadow: var(--glow-purple), inset 0 0 60px rgba(124,58,237,0.05);
+      transform: scale(1.03);
+    }
+    .pricing-card.popular:hover {
+      transform: scale(1.03) translateY(-6px);
+      box-shadow: 0 0 60px rgba(124,58,237,0.55);
+    }
+    .popular-badge {
+      position: absolute;
+      top: -1px; right: 24px;
+      background: var(--gradient);
+      color: var(--white);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 5px 16px;
+      border-radius: 0 0 10px 10px;
+    }
+
+    .plan-name {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .plan-ram {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+    .plan-price {
+      font-size: 1rem;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+    .plan-price span {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--white);
+    }
+    .plan-divider {
+      height: 1px;
+      background: var(--border);
+      margin-bottom: 24px;
+    }
+    .plan-features {
+      list-style: none;
+      margin-bottom: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .plan-features li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+    .plan-features li::before {
+      content: '✓';
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: rgba(34,211,238,0.12);
+      color: var(--blue-neon);
+      font-size: 0.7rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .btn-plan {
+      width: 100%;
+      justify-content: center;
+      padding: 14px;
+    }
+
+    /* =============================================
+       PERFORMANCE SECTION
+    ============================================= */
+    .performance { background: var(--deep); }
+    .perf-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 70px;
+      align-items: center;
+      margin-top: 0;
+    }
+    .perf-stats-list {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+    .perf-stat-item {}
+    .perf-stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 10px;
+    }
+    .perf-stat-label {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .perf-stat-val {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--blue-neon);
+    }
+    .perf-bar {
+      height: 8px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .perf-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: var(--gradient);
+      width: 0;
+      transition: width 1.6s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .perf-numbers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .perf-num-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 22px;
+      text-align: center;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .perf-num-card::before {
+      content: '';
+      position: absolute;
+      bottom: -30px; left: 50%;
+      transform: translateX(-50%);
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,58,237,0.3) 0%, transparent 70%);
+    }
+    .perf-num-card:hover {
+      border-color: rgba(34,211,238,0.4);
+      box-shadow: var(--glow-blue);
+      transform: translateY(-4px);
+    }
+    .perf-number {
+      font-size: 2.2rem;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .perf-num-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    /* =============================================
+       CTA SECTION
+    ============================================= */
+    .cta-section {
+      padding: 100px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 80% at 50% 50%, rgba(124,58,237,0.18) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 60% at 80% 20%, rgba(34,211,238,0.1) 0%, transparent 55%);
+    }
+    .cta-inner {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .cta-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 900;
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: 18px;
+    }
+    .cta-sub {
+      font-size: 1.05rem;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+    .cta-btn {
+      font-size: 1.05rem;
+      padding: 16px 44px;
+      box-shadow: 0 0 40px rgba(124,58,237,0.6);
+    }
+
+    /* =============================================
+       EMAIL CAPTURE FORM
+    ============================================= */
+    .waitlist-form {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+    .waitlist-input {
+      flex: 1 1 240px;
+      max-width: 320px;
+      padding: 14px 20px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color: var(--white);
+      font-size: 0.95rem;
+      font-family: inherit;
+      outline: none;
+      transition: var(--transition);
+    }
+    .waitlist-input::placeholder { color: var(--muted); }
+    .waitlist-input:focus {
+      border-color: var(--purple-mid);
+      background: rgba(124,58,237,0.07);
+      box-shadow: 0 0 0 3px rgba(124,58,237,0.15);
+    }
+    .waitlist-btn {
+      flex-shrink: 0;
+    }
+    .waitlist-note {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: -24px;
+      margin-bottom: 36px;
+    }
+
+    /* Trust badges */
+    .trust-row {
+      display: flex;
+      justify-content: center;
+      gap: 36px;
+      margin-top: 48px;
+      flex-wrap: wrap;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .trust-item .icon { font-size: 1rem; }
+
+    /* =============================================
+       FOOTER
+    ============================================= */
+    .footer {
+      background: var(--deep);
+      border-top: 1px solid var(--border);
+      padding: 60px 0 32px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 48px;
+    }
+    .footer-brand-name {
+      font-size: 1.6rem;
+      font-weight: 900;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+    }
+    .footer-brand-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 240px;
+      margin-bottom: 20px;
+    }
+    .social-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      background: rgba(124,58,237,0.1);
+      border: 1px solid rgba(124,58,237,0.25);
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    .social-link:hover {
+      background: rgba(124,58,237,0.2);
+      border-color: var(--purple-mid);
+      color: var(--white);
+    }
+    .footer-col-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 20px;
+    }
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .footer-links a {
+      text-decoration: none;
+      font-size: 0.9rem;
+      color: var(--muted);
+      transition: color var(--transition);
+    }
+    .footer-links a:hover { color: var(--white); }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-copy {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .footer-legal {
+      display: flex;
+      gap: 24px;
+    }
+    .footer-legal a {
+      font-size: 0.82rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+    .footer-legal a:hover { color: var(--white); }
+
+    /* =============================================
+       RESPONSIVE
+    ============================================= */
+    @media (max-width: 900px) {
+      .hero-inner { grid-template-columns: 1fr; text-align: center; }
+      .hero-sub    { margin: 0 auto 36px; }
+      .hero-badge  { margin-left: auto; margin-right: auto; }
+      .hero-buttons { justify-content: center; }
+      .hero-visual { display: none; }
+      .perf-inner  { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .navbar-links, .navbar-cta { display: none; }
+      .nav-toggle { display: flex; }
+    }
+    @media (max-width: 600px) {
+      .section { padding: 72px 0; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+      .perf-numbers { grid-template-columns: 1fr 1fr; }
+      .pricing-card.popular { transform: scale(1); }
+    }
+
+    /* Mobile nav overlay */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 99;
+      background: rgba(8,8,15,0.97);
+      backdrop-filter: blur(24px);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 30px;
+    }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav a {
+      text-decoration: none;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      transition: color var(--transition);
+    }
+    .mobile-nav a:hover { color: var(--white); }
+    .mobile-nav-close {
+      position: absolute;
+      top: 20px; right: 24px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1.8rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    /* Reveal animation */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =============================================
+       NAVBAR
+  ============================================= -->
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <a href="#" class="navbar-brand">ZURXT</a>
+      <ul class="navbar-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#performance">Performance</a></li>
+        <li><a href="#support">Support</a></li>
+      </ul>
+      <div class="navbar-cta">
+        <a href="#pricing" class="btn btn-outline" style="padding:10px 22px;font-size:0.88rem;">View Plans</a>
+        <a href="#pricing" class="btn btn-primary" style="padding:10px 22px;font-size:0.88rem;">Get Started</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Nav -->
+  <div class="mobile-nav" id="mobileNav">
+    <button class="mobile-nav-close" id="mobileClose">&#x2715;</button>
+    <a href="#features" class="mobile-link">Features</a>
+    <a href="#pricing"  class="mobile-link">Pricing</a>
+    <a href="#performance" class="mobile-link">Performance</a>
+    <a href="#support"  class="mobile-link">Support</a>
+    <a href="#pricing" class="btn btn-primary" style="margin-top:10px;">Get Started</a>
+  </div>
+
+  <!-- =============================================
+       HERO SECTION
+  ============================================= -->
+  <section class="hero" id="home">
+    <canvas id="particles-canvas"></canvas>
+    <div class="container">
+      <div class="hero-inner">
+        <!-- Left copy -->
+        <div class="hero-copy">
+          <div class="hero-badge" style="animation-delay:0s">🚀 Launching Soon – Join the Waitlist</div>
+          <h1 class="hero-title">
+            Power Your<br/>
+            <span class="grad">Minecraft Server</span><br/>
+            with ZURXT
+          </h1>
+          <p class="hero-sub">
+            High-performance hosting with zero lag and instant setup.
+            Built for speed, designed for gamers.
+          </p>
+          <div class="hero-buttons">
+            <a href="#pricing" class="btn btn-primary" id="hero-get-started">
+              <span>⚡</span> Get Started
+            </a>
+            <a href="#pricing" class="btn btn-outline">View Plans</a>
+          </div>
+        </div>
+
+        <!-- Right floating server card -->
+        <div class="hero-visual">
+          <div class="hero-card">
+            <div class="server-status">
+              <div class="status-dot"></div>
+              <span class="status-text">Server Online</span>
+            </div>
+            <div class="server-name">🟢 survival.yourserver.net</div>
+            <div class="server-stats">
+              <div class="stat-item">
+                <div class="stat-label">RAM</div>
+                <div class="stat-value blue">4 GB</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Players</div>
+                <div class="stat-value purple">24/50</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Latency</div>
+                <div class="stat-value blue">3ms</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Uptime</div>
+                <div class="stat-value" style="color:#22c55e">99.9%</div>
+              </div>
+            </div>
+            <div class="mini-bar-wrap">
+              <div class="mini-bar-label"><span>CPU Usage</span><span>18%</span></div>
+              <div class="mini-bar"><div class="mini-bar-fill" style="--target-width:18%"></div></div>
+            </div>
+            <div class="mini-bar-wrap">
+              <div class="mini-bar-label"><span>RAM Usage</span><span>61%</span></div>
+              <div class="mini-bar"><div class="mini-bar-fill" style="--target-width:61%; animation-delay:0.4s"></div></div>
+            </div>
+            <div class="mini-bar-wrap">
+              <div class="mini-bar-label"><span>Storage</span><span>34%</span></div>
+              <div class="mini-bar"><div class="mini-bar-fill" style="--target-width:34%; animation-delay:0.8s"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       FEATURES SECTION
+  ============================================= -->
+  <section class="features section" id="features">
+    <div class="container">
+      <div class="text-center reveal">
+        <span class="section-label">Why ZURXT?</span>
+        <h2 class="section-title">Everything you need to<br/><span class="grad">dominate the game</span></h2>
+        <p class="section-sub">Built from the ground up for Minecraft hosting. Every feature crafted for performance and reliability.</p>
+      </div>
+
+      <div class="features-grid">
+        <!-- NVMe SSD -->
+        <div class="feature-card reveal">
+          <div class="feature-icon blue">💾</div>
+          <h3 class="feature-title">NVMe SSD Storage</h3>
+          <p class="feature-desc">Lightning-fast NVMe drives deliver read speeds up to 7,000 MB/s — chunks load before your players even move.</p>
+        </div>
+        <!-- DDoS Protection -->
+        <div class="feature-card reveal">
+          <div class="feature-icon purple">🛡️</div>
+          <h3 class="feature-title">DDoS Protection</h3>
+          <p class="feature-desc">Industry-grade DDoS mitigation with up to 1 Tbps filtering capacity. Your server stays online, always.</p>
+        </div>
+        <!-- Instant Deployment -->
+        <div class="feature-card reveal">
+          <div class="feature-icon blue">⚡</div>
+          <h3 class="feature-title">Instant Deployment</h3>
+          <p class="feature-desc">Your server is live in under 30 seconds. One-click modpack installs, Paper, Spigot, Forge — all supported.</p>
+        </div>
+        <!-- 24/7 Support -->
+        <div class="feature-card reveal">
+          <div class="feature-icon purple">💬</div>
+          <h3 class="feature-title">24/7 Expert Support</h3>
+          <p class="feature-desc">Real humans available around the clock via Discord and tickets. Average response time under 5 minutes.</p>
+        </div>
+        <!-- Control Panel -->
+        <div class="feature-card reveal">
+          <div class="feature-icon blue">🖥️</div>
+          <h3 class="feature-title">Powerful Control Panel</h3>
+          <p class="feature-desc">Manage backups, plugins, databases, and sub-users from one sleek dashboard. No SSH needed.</p>
+        </div>
+        <!-- Global Network -->
+        <div class="feature-card reveal">
+          <div class="feature-icon purple">🌐</div>
+          <h3 class="feature-title">Global Network</h3>
+          <p class="feature-desc">Data centers spanning 3 continents. Choose the region closest to your players for ultra-low latency.</p>
+        </div>
+        <!-- Automatic Backups -->
+        <div class="feature-card reveal">
+          <div class="feature-icon blue">🔄</div>
+          <h3 class="feature-title">Automatic Backups</h3>
+          <p class="feature-desc">Daily automated backups with one-click restore. Your worlds are always safe, even after accidents.</p>
+        </div>
+        <!-- Free Domain -->
+        <div class="feature-card reveal">
+          <div class="feature-icon purple">🏷️</div>
+          <h3 class="feature-title">Free Subdomain</h3>
+          <p class="feature-desc">Every plan includes a free .zurxt.host subdomain and a custom port. Plug-in and play from day one.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       PRICING SECTION
+  ============================================= -->
+  <section class="section" id="pricing">
+    <div class="container">
+      <div class="text-center reveal">
+        <span class="section-label">Pricing</span>
+        <h2 class="section-title">Simple, transparent<br/><span class="grad">plans for every server</span></h2>
+        <p class="section-sub">No hidden fees. No contracts. Upgrade or downgrade anytime.</p>
+      </div>
+
+      <div class="pricing-grid">
+        <!-- 1GB Starter Plan -->
+        <div class="pricing-card reveal">
+          <p class="plan-name">Starter</p>
+          <p class="plan-ram">1GB RAM</p>
+          <p class="plan-price">Starting at <span>$2.99</span>/mo</p>
+          <div class="plan-divider"></div>
+          <ul class="plan-features">
+            <li>1 GB DDR4 RAM</li>
+            <li>10 GB NVMe SSD</li>
+            <li>Up to 8 players</li>
+            <li>DDoS Protection</li>
+            <li>Free Subdomain</li>
+            <li>24/7 Support</li>
+          </ul>
+          <a href="#" class="btn btn-outline btn-plan" data-plan="starter">Buy Now</a>
+        </div>
+
+        <!-- 2GB Pro Plan – Popular -->
+        <div class="pricing-card popular reveal">
+          <div class="popular-badge">⭐ Most Popular</div>
+          <p class="plan-name">Pro</p>
+          <p class="plan-ram grad">2GB RAM</p>
+          <p class="plan-price">Starting at <span>$4.99</span>/mo</p>
+          <div class="plan-divider"></div>
+          <ul class="plan-features">
+            <li>2 GB DDR4 RAM</li>
+            <li>20 GB NVMe SSD</li>
+            <li>Up to 20 players</li>
+            <li>DDoS Protection</li>
+            <li>Free Subdomain</li>
+            <li>Daily Backups</li>
+            <li>Plugin Manager</li>
+            <li>Priority Support</li>
+          </ul>
+          <a href="#" class="btn btn-primary btn-plan" data-plan="pro">Buy Now</a>
+        </div>
+
+        <!-- 3GB Elite Plan -->
+        <div class="pricing-card reveal">
+          <p class="plan-name">Elite</p>
+          <p class="plan-ram">3GB RAM</p>
+          <p class="plan-price">Starting at <span>$6.99</span>/mo</p>
+          <div class="plan-divider"></div>
+          <ul class="plan-features">
+            <li>3 GB DDR4 RAM</li>
+            <li>30 GB NVMe SSD</li>
+            <li>Up to 40 players</li>
+            <li>DDoS Protection</li>
+            <li>Free Subdomain</li>
+            <li>Daily Backups</li>
+            <li>Plugin Manager</li>
+            <li>Dedicated IP</li>
+            <li>Priority Support</li>
+          </ul>
+          <a href="#" class="btn btn-outline btn-plan" data-plan="elite">Buy Now</a>
+        </div>
+
+        <!-- 4GB Max Plan -->
+        <div class="pricing-card reveal">
+          <p class="plan-name">Max</p>
+          <p class="plan-ram">4GB RAM</p>
+          <p class="plan-price">Starting at <span>$8.99</span>/mo</p>
+          <div class="plan-divider"></div>
+          <ul class="plan-features">
+            <li>4 GB DDR4 RAM</li>
+            <li>40 GB NVMe SSD</li>
+            <li>Unlimited players</li>
+            <li>DDoS Protection</li>
+            <li>Free Subdomain</li>
+            <li>Daily Backups</li>
+            <li>Plugin Manager</li>
+            <li>Dedicated IP</li>
+            <li>Priority Support</li>
+          </ul>
+          <a href="#" class="btn btn-outline btn-plan" data-plan="max">Buy Now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       PERFORMANCE SECTION
+  ============================================= -->
+  <section class="performance section" id="performance">
+    <div class="container">
+      <div class="perf-inner">
+        <!-- Left: progress bars -->
+        <div class="reveal">
+          <span class="section-label">Performance</span>
+          <h2 class="section-title">Built for<br/><span class="grad">maximum speed</span></h2>
+          <p class="section-sub" style="margin-bottom:40px">Every component optimised to keep your TPS locked at 20 — no matter the load.</p>
+
+          <div class="perf-stats-list">
+            <div class="perf-stat-item">
+              <div class="perf-stat-header">
+                <span class="perf-stat-label">NVMe Read Speed</span>
+                <span class="perf-stat-val">7,000 MB/s</span>
+              </div>
+              <div class="perf-bar"><div class="perf-bar-fill" data-width="95%"></div></div>
+            </div>
+            <div class="perf-stat-item">
+              <div class="perf-stat-header">
+                <span class="perf-stat-label">Network Bandwidth</span>
+                <span class="perf-stat-val">1 Gbps+</span>
+              </div>
+              <div class="perf-bar"><div class="perf-bar-fill" data-width="90%"></div></div>
+            </div>
+            <div class="perf-stat-item">
+              <div class="perf-stat-header">
+                <span class="perf-stat-label">Server Uptime SLA</span>
+                <span class="perf-stat-val">99.9%</span>
+              </div>
+              <div class="perf-bar"><div class="perf-bar-fill" data-width="99.9%"></div></div>
+            </div>
+            <div class="perf-stat-item">
+              <div class="perf-stat-header">
+                <span class="perf-stat-label">DDoS Mitigation</span>
+                <span class="perf-stat-val">1 Tbps</span>
+              </div>
+              <div class="perf-bar"><div class="perf-bar-fill" data-width="88%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: number cards -->
+        <div class="perf-numbers reveal">
+          <div class="perf-num-card">
+            <div class="perf-number grad">99.9%</div>
+            <div class="perf-num-label">Guaranteed Uptime</div>
+          </div>
+          <div class="perf-num-card">
+            <div class="perf-number" style="color:var(--blue-neon)">&lt;3ms</div>
+            <div class="perf-num-label">Average Latency</div>
+          </div>
+          <div class="perf-num-card">
+            <div class="perf-number" style="color:var(--purple-mid)">7K</div>
+            <div class="perf-num-label">MB/s Disk Speed</div>
+          </div>
+          <div class="perf-num-card">
+            <div class="perf-number grad">100+</div>
+            <div class="perf-num-label">Early Adopters</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       CTA SECTION
+  ============================================= -->
+  <section class="cta-section" id="support">
+    <div class="cta-inner reveal">
+      <span class="section-label">Launching Soon</span>
+      <h2 class="cta-title">Be the first to<br/><span class="grad">deploy on ZURXT</span></h2>
+      <p class="cta-sub">We're launching in days. Drop your email and be the first to know. No credit card required – get notified when we launch.</p>
+
+      <!-- Pre-launch email capture form -->
+      <form class="waitlist-form" id="waitlist-form" onsubmit="handleWaitlist(event)">
+        <input
+          type="email"
+          class="waitlist-input"
+          id="waitlist-email"
+          placeholder="Enter your email address"
+          required
+          autocomplete="email"
+        />
+        <button type="submit" class="btn btn-primary waitlist-btn">🔔 Notify Me</button>
+      </form>
+      <p class="waitlist-note" id="waitlist-msg">Join the waitlist — we'll email you the moment we go live.</p>
+
+      <div class="trust-row">
+        <div class="trust-item"><span class="icon">🔒</span> SSL Secured</div>
+        <div class="trust-item"><span class="icon">💳</span> No Card Needed</div>
+        <div class="trust-item"><span class="icon">🔄</span> 24hr Money-Back</div>
+        <div class="trust-item"><span class="icon">🌍</span> Global Reach</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       FOOTER
+  ============================================= -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Brand -->
+        <div>
+          <div class="footer-brand-name">ZURXT</div>
+          <p class="footer-brand-desc">Premium Minecraft hosting engineered for performance. Zero lag, instant setup, zero compromise.</p>
+          <!-- Discord link – update href when server is ready -->
+          <a href="#" class="social-link" target="_blank" rel="noopener">
+            <svg width="16" height="12" viewBox="0 0 71 55" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0)"><path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.44065 45.4204 0.52494C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.52494C25.5141 0.44328 25.4218 0.40113 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.518 0.385617 45.5576C6.45866 50.0174 12.3413 52.7249 18.1147 54.5195C18.2071 54.5477 18.305 54.5139 18.3638 54.4378C19.7295 52.5728 20.9469 50.6063 21.9907 48.5383C22.0523 48.4172 21.9935 48.2735 21.8676 48.2256C19.9366 47.4931 18.0979 46.6 16.3292 45.5858C16.1893 45.5041 16.1781 45.304 16.3068 45.2082C16.679 44.9293 17.0513 44.6391 17.4067 44.3461C17.471 44.2926 17.5606 44.2813 17.6362 44.3151C29.2558 49.6202 41.8354 49.6202 53.3179 44.3151C53.3935 44.2785 53.4831 44.2898 53.5502 44.3433C53.9057 44.6363 54.2779 44.9293 54.6529 45.2082C54.7816 45.304 54.7732 45.5041 54.6333 45.5858C52.8646 46.6197 51.0259 47.4931 49.0921 48.2228C48.9662 48.2707 48.9102 48.4172 48.9718 48.5383C50.038 50.6034 51.2554 52.5699 52.5959 54.435C52.6519 54.5139 52.7526 54.5477 52.845 54.5195C58.6464 52.7249 64.529 50.0174 70.6021 45.5576C70.6551 45.518 70.6887 45.459 70.6943 45.3942C72.1747 30.0791 68.2147 16.7757 60.1968 4.9823C60.1772 4.9429 60.1437 4.9147 60.1045 4.8978ZM23.7259 37.3253C20.2276 37.3253 17.3451 34.1136 17.3451 30.1693C17.3451 26.225 20.1717 23.0133 23.7259 23.0133C27.308 23.0133 30.1626 26.2532 30.1066 30.1693C30.1066 34.1136 27.28 37.3253 23.7259 37.3253ZM47.3178 37.3253C43.8196 37.3253 40.9371 34.1136 40.9371 30.1693C40.9371 26.225 43.7636 23.0133 47.3178 23.0133C50.9 23.0133 53.7545 26.2532 53.6986 30.1693C53.6986 34.1136 50.9 37.3253 47.3178 37.3253Z" fill="currentColor"/></g><defs><clipPath id="clip0"><rect width="71" height="55" fill="white"/></clipPath></defs></svg>
+            Discord
+          </a>
+        </div>
+        <!-- Company -->
+        <div>
+          <h4 class="footer-col-title">Company</h4>
+          <ul class="footer-links">
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Press</a></li>
+          </ul>
+        </div>
+        <!-- Hosting -->
+        <div>
+          <h4 class="footer-col-title">Hosting</h4>
+          <ul class="footer-links">
+            <li><a href="#pricing">Plans</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#performance">Performance</a></li>
+            <li><a href="#">Minecraft Java</a></li>
+            <li><a href="#">Minecraft Bedrock</a></li>
+          </ul>
+        </div>
+        <!-- Support -->
+        <div>
+          <h4 class="footer-col-title">Support</h4>
+          <ul class="footer-links">
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Open Ticket</a></li>
+            <li><a href="#">Status Page</a></li>
+            <li><a href="#">Community</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="footer-copy">© 2025 ZURXT Hosting. All rights reserved.</p>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- =============================================
+       JAVASCRIPT
+  ============================================= -->
+  <script>
+    /* --- Navbar scroll effect --- */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+
+    /* --- Mobile nav --- */
+    const toggle   = document.getElementById('navToggle');
+    const mobileNav = document.getElementById('mobileNav');
+    const mobileClose = document.getElementById('mobileClose');
+    const mobileLinks = document.querySelectorAll('.mobile-link, .mobile-nav .btn');
+
+    toggle.addEventListener('click', () => mobileNav.classList.add('open'));
+    mobileClose.addEventListener('click', () => mobileNav.classList.remove('open'));
+    mobileLinks.forEach(l => l.addEventListener('click', () => mobileNav.classList.remove('open')));
+
+    /* --- Intersection Observer: reveal & progress bars --- */
+    const revealEls = document.querySelectorAll('.reveal');
+    const perfBars  = document.querySelectorAll('.perf-bar-fill');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    revealEls.forEach(el => observer.observe(el));
+
+    const barObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.width = entry.target.dataset.width;
+          barObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    perfBars.forEach(bar => barObserver.observe(bar));
+
+    /* --- Stagger reveal children --- */
+    document.querySelectorAll('.features-grid .reveal, .pricing-grid .reveal, .perf-numbers .reveal').forEach((el, i) => {
+      el.style.transitionDelay = (i * 0.08) + 's';
+    });
+
+    /* --- Particles canvas --- */
+    (function () {
+      const canvas = document.getElementById('particles-canvas');
+      const ctx    = canvas.getContext('2d');
+      let particles = [];
+      let animId;
+
+      function resize() {
+        canvas.width  = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+      }
+
+      function createParticles(count) {
+        particles = [];
+        for (let i = 0; i < count; i++) {
+          particles.push({
+            x:   Math.random() * canvas.width,
+            y:   Math.random() * canvas.height,
+            r:   Math.random() * 1.5 + 0.3,
+            dx:  (Math.random() - 0.5) * 0.3,
+            dy:  (Math.random() - 0.5) * 0.3,
+            alpha: Math.random() * 0.5 + 0.1,
+            color: Math.random() > 0.5 ? '124,58,237' : '34,211,238'
+          });
+        }
+      }
+
+      function drawLines() {
+        const maxDist = 120;
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx   = particles[i].x - particles[j].x;
+            const dy   = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            if (dist < maxDist) {
+              const alpha = (1 - dist / maxDist) * 0.12;
+              ctx.strokeStyle = `rgba(124,58,237,${alpha})`;
+              ctx.lineWidth   = 0.6;
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+          p.x += p.dx;
+          p.y += p.dy;
+          if (p.x < 0 || p.x > canvas.width)  p.dx *= -1;
+          if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${p.color},${p.alpha})`;
+          ctx.fill();
+        });
+        drawLines();
+        animId = requestAnimationFrame(animate);
+      }
+
+      /* Reduce particle count on mobile for better performance */
+      function particleCount() {
+        return window.innerWidth < 600 ? 30 : 80;
+      }
+
+      function init() {
+        resize();
+        createParticles(particleCount());
+        if (animId) cancelAnimationFrame(animId);
+        animate();
+      }
+
+      window.addEventListener('resize', () => { resize(); createParticles(particleCount()); }, { passive: true });
+      init();
+    })();
+  </script>
+</body>
+</html>
